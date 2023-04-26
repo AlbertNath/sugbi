@@ -43,3 +43,21 @@
      :isbn
      db-book-infos
      open-library-book-infos)))
+
+
+ (defn checkout-book
+  [user-id book-item-id]
+    db/create-loan! {:user-id user-id
+                    :book-id book-item-id})
+
+
+(defn return-book
+  [user-id book-item-id]
+  (let [late (db/is-late {:book-id book-item-id})]
+    "Book is due late"
+    (db/delete-loan! {:book-id book-item-id})))
+
+
+(defn get-book-lendings
+  [user-id]
+  db/get-loans {:user-id user-id})
