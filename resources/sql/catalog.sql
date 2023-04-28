@@ -33,10 +33,10 @@ WHERE user_id = :user-id AND book_id = :book-id
 GROUP BY user_id;
 
 -- :name book-stock :? :1
-SELECT title, COUNT(*) AS "total_copies"
-FROM catalog.book_item
-WHERE lib_id = :book-id
-GROUP BY lib_id;
+SELECT COUNT(*) AS "total_copies"
+FROM catalog.book JOIN catalog.book_item ON lib_id = book_id
+WHERE isbn = :isbn
+GROUP BY isbn;
 
 -- :name is-late :? :1
 SELECT TRUE AS "is_late"
@@ -45,7 +45,7 @@ WHERE book_id = :book-id AND loan_due_date < CURRENT_TIMESTAMP;
 
 -- :name create-loan! :! :2
 INSERT INTO catalog.loan (book_id, user_id, loan_init_date, loan_due_date)
-VALUES (:book-id, :user-id, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP + INTERVAL '2 weeks')
+VALUES (:book-id, :user-id, CURRENT_TIMESTAMP::DATE, (CURRENT_TIMESTAMP + INTERVAL '2 weeks')::DATE)
 returning *;
 
 -- :name delete-loan! :! :1

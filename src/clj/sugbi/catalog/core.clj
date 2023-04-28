@@ -19,8 +19,9 @@
 (defn get-book
   [isbn fields]
   (when-let [db-book (db/get-book {:isbn isbn})]
-    (let [open-library-book-info (olb/book-info isbn fields)]
-      (merge db-book open-library-book-info))))
+    (when-let [available (is-available isbn)]
+      (let [open-library-book-info (olb/book-info isbn fields)]
+        (merge db-book open-library-book-info {:available available})))))
 
 
 (defn get-books
@@ -38,6 +39,7 @@
   [title fields]
   (let [db-book-infos           (db/matching-books title)
         isbns                   (map :isbn db-book-infos)
+        available               (map is-available isbns)
         open-library-book-infos (olb/multiple-book-info isbns fields)]
     (merge-on-key
      :isbn
@@ -47,17 +49,23 @@
 
  (defn checkout-book
   [user-id book-item-id]
-    db/create-loan! {:user-id user-id
-                    :book-id book-item-id})
+    (db/create-loan! {:user-id user-id
+                    :book-id book-item-id}))
 
 
 (defn return-book
   [user-id book-item-id]
   (let [late (db/is-late {:book-id book-item-id})]
+    (if late
     "Book is due late"
-    (db/delete-loan! {:book-id book-item-id})))
+    (db/delete-loan! {:book-id book-item-id}))))
 
 
 (defn get-book-lendings
   [user-id]
   db/get-loans {:user-id user-id})
+
+
+(defn is-available
+   [isbn]
+    (> (db/book-stock {:isbn isbn}) 0))
