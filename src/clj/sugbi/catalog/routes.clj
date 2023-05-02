@@ -23,6 +23,11 @@
    (ds/opt :subjects)            [string?]
    (ds/opt :number-of-pages)     int?})
 
+(def book-loan-info-spec
+  {:book-lending-id int?
+   :book-id int?
+   :user_id int?
+   :loan-init-date })
 
 (def routes
   ["/catalog" {:swagger {:tags ["Catalog"]}}
@@ -44,21 +49,31 @@
                         :handler    catalog.handlers/get-book}
                :delete {:summary    "delete a book title of the catalog"
                         :parameters {:header {:cookie string?}
-                                     :path   {:isbn string?}}
+                                     :path {:isbn string?}}
                         :responses  {200 {:body {:deleted int?}}
                                      405 {:body {:message string?}}}
                         :handler    catalog.handlers/delete-book!}}
-     ["/item/:book-item-id" {}
+     ["/item/:book-item-id"
       ["/checkout" {:post {:summary "creates a book loan"
                            :parameters {:path {:book-item-id int?}}
                            :responses {200 {:body {:book-item-id int?}}
                                        404 {:body {:book-item-id int?}}
-                                       409 {:body {:message string?}}
-                                       403 {:body {:message string?}}}
+                                       409 {:body {:message string?}}}
                            :handler catalog.handlers/create-loan!}}]
       ["/return" {:post [:summary "deletes a loan by returning a book"
-                         :parameters {:path {:book-item-id int?}}
-                         :responses {200 {:body {}}}]}]]]]]
+                         :parameters {:path {:user-id int? :book-item-id int?}}
+                         :responses {200 {:body {:book-item-id int?}}
+                                     404 {:body {:book-item-id int?}}
+                                     403 {:body {:message string?}}}]}]]]]]
 
+  ["/lendings" {:swagger {:tags ["Librarians"]}}
+   ["" {:get {:summary "returns all loans of the user with the specified id"
+              :parameters {:query {(ds/opt :q) string?}
+                           :header {:cookie string?}}
+              :responses {200 {:body [book-loan-info-spec]}}}}]]
   ["/user" {:swagger {:tags ["Users"]}}
-   ["/lendings" {}]])
+   ["/lendings"
+    ["" {:get {:summary "gets all book loans of the current user"
+                       :parameters {:header {:cookie string?}}
+                       :responses {200 {:body [book-loan-info-spec]}
+                                   404 {:body {:message "Couldn't retrieve the ledings"}}}}}]]])
