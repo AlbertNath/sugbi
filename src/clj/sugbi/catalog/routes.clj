@@ -49,10 +49,16 @@
                                      405 {:body {:message string?}}}
                         :handler    catalog.handlers/delete-book!}}
      ["/item/:book-item-id" {}
-      ["/checkout" {:post {:summary "creates a book loan."
+      ["/checkout" {:post {:summary "creates a book loan"
                            :parameters {:path {:book-item-id int?}}
-                           :responses {200 {:body}}}}]
-      ["/return" {}]]]]]
+                           :responses {200 {:body {:book-item-id int?}}
+                                       404 {:body {:book-item-id int?}}
+                                       409 {:body {:message string?}}
+                                       403 {:body {:message string?}}}
+                           :handler catalog.handlers/create-loan!}}]
+      ["/return" {:post [:summary "deletes a loan by returning a book"
+                         :parameters {:path {:book-item-id int?}}
+                         :responses {200 {:body {}}}]}]]]]]
 
   ["/user" {:swagger {:tags ["Users"]}}
-   ["/lendiings" {}]])
+   ["/lendings" {}]])

@@ -46,3 +46,7 @@
                         catalog.core/available-fields)]
       (response/ok book-info)
       (response/not-found {:isbn isbn}))))
+
+(defn create-loan!
+  [request]
+  )
