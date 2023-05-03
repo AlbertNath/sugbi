@@ -50,3 +50,11 @@
 (defn create-loan!
   [request]
   )
+
+(defn return-book!
+  [request]
+  )
+
+(defn get-loans
+  [request]
+  )

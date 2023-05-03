@@ -8,7 +8,6 @@
   {:isbn  string?
    :title string?})
 
-
 (def book-info-spec
   {:isbn                         string?
    :available                    boolean?
@@ -26,8 +25,7 @@
 (def book-loan-info-spec
   {:book-lending-id int?
    :book-id int?
-   :user_id int?
-   :loan-init-date })
+   :user_id int?})
 
 (def routes
   ["/catalog" {:swagger {:tags ["Catalog"]}}
@@ -53,6 +51,7 @@
                         :responses  {200 {:body {:deleted int?}}
                                      405 {:body {:message string?}}}
                         :handler    catalog.handlers/delete-book!}}
+
      ["/item/:book-item-id"
       ["/checkout" {:post {:summary "creates a book loan"
                            :parameters {:path {:book-item-id int?}}
@@ -64,16 +63,12 @@
                          :parameters {:path {:user-id int? :book-item-id int?}}
                          :responses {200 {:body {:book-item-id int?}}
                                      404 {:body {:book-item-id int?}}
-                                     403 {:body {:message string?}}}]}]]]]]
-
-  ["/lendings" {:swagger {:tags ["Librarians"]}}
-   ["" {:get {:summary "returns all loans of the user with the specified id"
-              :parameters {:query {(ds/opt :q) string?}
-                           :header {:cookie string?}}
-              :responses {200 {:body [book-loan-info-spec]}}}}]]
-  ["/user" {:swagger {:tags ["Users"]}}
-   ["/lendings"
-    ["" {:get {:summary "gets all book loans of the current user"
-                       :parameters {:header {:cookie string?}}
-                       :responses {200 {:body [book-loan-info-spec]}
-                                   404 {:body {:message "Couldn't retrieve the ledings"}}}}}]]])
+                                     403 {:body {:message string?}}}
+                         :handler catalog.handlers/return-book!]}]]]]
+   ["/lendings" {:swagger {:tags ["Librarians"]}}
+    ["" {:get {:summary "returns all loans of the user with the specified id"
+               :parameters {:query {(ds/opt :q) string?}
+                            :header {:cookie string?}}
+               :responses {200 {:body [book-loan-info-spec]}}
+               :handler catalog.handlers/get-loans}}]]
+   ])
