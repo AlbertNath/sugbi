@@ -15,6 +15,10 @@
 
 (def available-fields olb/relevant-fields)
 
+(defn is-available
+   [isbn]
+    (> (db/book-stock {:isbn isbn}) 0))
+
 
 (defn get-book
   [isbn fields]
@@ -64,8 +68,3 @@
 (defn get-book-lendings
   [user-id]
   db/get-loans {:user-id user-id})
-
-
-(defn is-available
-   [isbn]
-    (> (db/book-stock {:isbn isbn}) 0))

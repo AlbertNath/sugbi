@@ -46,3 +46,17 @@
                         catalog.core/available-fields)]
       (response/ok book-info)
       (response/not-found {:isbn isbn}))))
+
+(defn create-loan!
+  [request]
+  (let [id (get-in request [:book-item-id])
+        usr-id (get-in request [:session])
+        book-id (catalog.db/extract-book {:book-id id})]
+    (if-let [loaned (catalog.db/is-loaned {:book-item-id id})]
+      (response/forbidden {:message "book already on loan"})
+      ((catalog.db/create-loan! {:user-id usr-id :book-id book-id})
+       (response/ok id)))))
+
+(defn return-book!
+  [request]
+  )

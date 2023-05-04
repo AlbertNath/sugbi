@@ -8,6 +8,7 @@
     [reitit.ring.middleware.multipart :as multipart]
     [reitit.ring.middleware.parameters :as parameters]
     [sugbi.catalog.routes :as catalog.routes]
+    [sugbi.user-management.routes :as users.routes]
     [sugbi.middleware.formats :as formats]
     [ring.util.http-response :refer :all]
     [clojure.java.io :as io]))
@@ -47,4 +48,5 @@
             {:url "/api/swagger.json"
              :config {:validator-url nil}})}]]
 
-   catalog.routes/routes])
+   catalog.routes/routes
+   users.routes/routes])
