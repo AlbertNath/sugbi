@@ -23,10 +23,6 @@
    (ds/opt :subjects)            [string?]
    (ds/opt :number-of-pages)     int?})
 
-(def book-loan-info-spec
-  {:book-lending-id int?
-   :book-id int?
-   :user_id int?})
 
 (def routes
   ["/catalog" {:swagger {:tags ["Catalog"]}}
@@ -62,7 +58,8 @@
                                        409 {:body {:message string?}}}
                            :handler catalog.handlers/create-loan!}}]
       ["/return" {:delete {:summary "deletes a book loan by returning a book"
-                         :parameters {:path {:user-id int? :book-item-id int?}}
+                         :parameters {:header {:cookie string?}
+                                      :path {:book-item-id int?}}
                          :responses {200 {:body {:book-item-id int?}}
                                      404 {:body {:book-item-id int?
                                                  :message string?}}
