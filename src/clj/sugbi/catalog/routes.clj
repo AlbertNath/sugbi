@@ -47,4 +47,21 @@
                                      :path   {:isbn string?}}
                         :responses  {200 {:body {:deleted int?}}
                                      405 {:body {:message string?}}}
-                        :handler    catalog.handlers/delete-book!}}]]])
+                        :handler    catalog.handlers/delete-book!}}]
+    ["/item"
+     [ "/:book-item-id"
+      ["/checkout" {:post {:summary "creates a book loan"
+                           :parameters {:header {:cookie string?}
+                                        :path {:book-item-id int?}}
+                           :responses {200 {:body {:book-item-id int?}}
+                                       404 {:body {:book-item-id int?}}
+                                       409 {:body {:message string?}}}
+                           :handler catalog.handlers/create-loan!}}]
+      ["/return" {:delete {:summary "deletes a book loan by returning a book"
+                         :parameters {:header {:cookie string?}
+                                      :path {:book-item-id int?}}
+                         :responses {200 {:body {:book-item-id int?}}
+                                     404 {:body {:book-item-id int?
+                                                 :message string?}}
+                                     403 {:body {:message string?}}}
+                         :handler catalog.handlers/return-book!}}]]]]])

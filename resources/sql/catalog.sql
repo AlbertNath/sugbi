@@ -55,3 +55,13 @@ DELETE FROM catalog.loan WHERE book_id = :book-id returning *;
 SELECT user_id, book_id, title
 FROM catalog.loan JOIN catalog.book ON catalog.loan.book_id = catalog.book.book_id
 WHERE user_id = :user-id;
+
+-- :name is-loaned :? :1
+SELECT *
+FROM catalog.book_item INNER JOIN catalog.loan ON catalog.loan.book_id = catalog.book_item.book_id
+WHERE catalog.loan.id = :book-item-id;
+
+-- :name extract-book :? :1
+SELECT lib_id
+FROM catalog.book_item
+WHERE lib_id = :book-id;
